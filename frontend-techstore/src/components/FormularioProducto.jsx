@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = 'https://techstore-0mk4.onrender.com';
+
 const FormularioProducto = ({ alGuardar, productoEditando, setProductoEditando }) => {
     const [producto, setProducto] = useState({ nombre: '', categoría: '', precio: '', stock: '' });
-
-    // Si productoEditando cambia, rellenamos el formulario
+    
     useEffect(() => {
         if (productoEditando) setProducto(productoEditando);
     }, [productoEditando]);
@@ -18,17 +19,16 @@ const FormularioProducto = ({ alGuardar, productoEditando, setProductoEditando }
 
         try {
             if (productoEditando) {
-                // Modo Actualizar (PUT)
-                await axios.put(`http://localhost:3000/productos/${producto.id}`, producto);
-                setProductoEditando(null); // Limpiar modo edición
+                await axios.put(`${API_URL}/productos/${producto.id}`, producto);
+                setProductoEditando(null);
             } else {
-                // Modo Crear (POST)
-                await axios.post('http://localhost:3000/productos', producto);
+                await axios.post(`${API_URL}/productos`, producto);
             }
             alGuardar();
             setProducto({ nombre: '', categoría: '', precio: '', stock: '' });
         } catch (error) {
             console.error(error);
+            alert("Error al guardar el producto");
         }
     };
 
@@ -39,7 +39,7 @@ const FormularioProducto = ({ alGuardar, productoEditando, setProductoEditando }
             <input type="number" placeholder="Precio" value={producto.precio} onChange={(e) => setProducto({...producto, precio: e.target.value})} />
             <input type="number" placeholder="Stock" value={producto.stock} onChange={(e) => setProducto({...producto, stock: e.target.value})} />
             <button type="submit">{productoEditando ? 'Actualizar' : 'Guardar'}</button>
-            {productoEditando && <button onClick={() => {setProductoEditando(null); setProducto({ nombre: '', categoría: '', precio: '', stock: '' })}}>Cancelar</button>}
+            {productoEditando && <button type="button" onClick={() => {setProductoEditando(null); setProducto({ nombre: '', categoría: '', precio: '', stock: '' })}}>Cancelar</button>}
         </form>
     );
 };
